@@ -1,4 +1,4 @@
-import api from "../../service/api";
+import { Api } from "../../service/api";
 import Searchbar from "../Searchbar/Searchbar";
 import { ImageGallery } from "../ImageGallery/ImageGallery";
 import { Button } from "../Button/Button";
@@ -16,7 +16,7 @@ export default class App extends Component {
     const apiData = async () => {
       this.loader();
       try {
-        const data = await api(this.state.search, this.state.page);
+        const data = await Api(this.state.search, this.state.page);
         this.setState(({ images }) => {
           return { images: [...images, ...data.hits] };
         });

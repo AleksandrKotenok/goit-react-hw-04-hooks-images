@@ -9,7 +9,7 @@ axios.defaults.params = {
   per_page: 12,
 };
 
-const Api = async (search, page) => {
+export const  Api = async (search, page) => {
   try {
     const { data } = await axios.get('', {
       params: {
@@ -23,5 +23,3 @@ const Api = async (search, page) => {
     console.error(event);
   }
 };
-
-export default Api;
