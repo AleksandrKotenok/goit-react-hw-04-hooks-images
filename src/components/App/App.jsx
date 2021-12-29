@@ -3,74 +3,51 @@ import { Searchbar } from "../Searchbar/Searchbar";
 import { ImageGallery } from "../ImageGallery/ImageGallery";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Loader/Loader";
-import React, { Component, Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
 
-export default class App extends Component {
-  state = {
-    search: "",
-    page: 1,
-    images: [],
-    loader: false,
-  };
-  componentDidUpdate(prevProps, { search, page }) {
+export default function App() {
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [images, setImages] = useState([]);
+  const [load, setLoad] = useState(false);
+  useEffect(() => {
+    if (!search) {
+      return;
+    }
     const apiData = async () => {
-      this.loader();
       try {
-        const data = await Api(this.state.search, this.state.page);
-        this.setState(({ images }) => {
-          return { images: [...images, ...data.hits] };
+        const data = await Api(search, page);
+        setImages((images) => [...images, ...data.hits]);
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
         });
       } catch (event) {
         console.error(event);
       } finally {
-        this.loader();
+        setLoad(false);
       }
     };
-    if (search !== this.state.search || page !== this.state.page) {
-      apiData();
-    }
-    if (this.state.page !== 1) {
-      this.scroll();
-    }
-  }
-  loader = () => {
-    this.setState(({ loader }) => ({ loader: !loader }));
-  };
-  scroll = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
-  };
+    apiData();
+  }, [search, page]);
 
-  modalData = (checkedId) => {
-    const image = this.state.images.find(({ id }) => id === checkedId);
-    this.setState({ modalImages: image.largeImageURL });
+  const changeQuery = (query) => {
+    setLoad(true);
+    setSearch(query);
+    setPage(1);
+    setImages([]);
   };
-
-  changeQuery = (query) => {
-    this.setState({
-      search: query,
-      page: 1,
-      images: [],
-    });
+  const more = () => {
+    setLoad(true);
+    setPage((prevValue) => prevValue + 1);
   };
-  more = () => {
-    this.setState((prevState) => ({
-      page: prevState.page + 1,
-    }));
-  };
-
-  render() {
-    const { images, page, loader } = this.state;
-    const enable = images.length > 0 && images.length / page === 12;
-    return (
-      <Fragment>
-        <Searchbar onSubmit={this.changeQuery} />
-        <ImageGallery image={images} onClick={this.modalData} />
-        {loader && <Spinner />}
-        {enable && <Button onClick={this.more} />}
-      </Fragment>
-    );
-  }
+  const enable = images.length > 0 && images.length / page === 12;
+  return (
+    <Fragment>
+      <Searchbar onSubmit={changeQuery} />
+      <ImageGallery image={images} />
+      {load && <Spinner />}
+      {enable && <Button onClick={more} />}
+    </Fragment>
+  );
 }
