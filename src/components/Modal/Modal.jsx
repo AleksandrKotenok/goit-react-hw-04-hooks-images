@@ -1,34 +1,33 @@
-import { Component } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
 import s from "./Modal.module.css";
-const modal = document.querySelector("#modal");
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener("keydown", this.closeEsc);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.closeEsc);
-  }
-  closeEsc = (event) => {
-    if (event.code === "Escape") {
-      this.props.modal();
-    }
-  };
-  closeBackdrop = (event) => {
-    if (event.currentTarget === event.target) {
-      this.props.modal();
-    }
-  };
+export const Modal = ({ large, modal }) => {
+  useEffect(() => {
+    window.addEventListener("keydown", closeEsc);
+    return () => {
+      window.removeEventListener("keydown", closeEsc);
+    };
+  });
 
-  render() {
-    return createPortal(
-      <div className={s.overlay} onClick={this.closeBackdrop}>
-        <div className={s.modal}>
-          <img src={this.props.large} alt="" />
-        </div>
-      </div>,
-      modal
-    );
-  }
-}
+  const closeEsc = (event) => {
+    if (event.code === "Escape") modal();
+  };
+  const closeBackdrop = (event) => {
+    if (event.currentTarget === event.target) modal();
+  };
+  const point = document.querySelector("#modal");
+  return createPortal(
+    <div className={s.overlay} onClick={closeBackdrop}>
+      <div className={s.modal}>
+        <img src={large} alt="" />
+      </div>
+    </div>,
+    point
+  );
+};
+Modal.propTypes = {
+  large: PropTypes.string,
+  modal: PropTypes.func,
+};
