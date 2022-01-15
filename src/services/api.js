@@ -13,12 +13,12 @@ export const  Api = async (search, page) => {
   try {
     const { data } = await axios.get('', {
       params: {
-        q: search,
+        search,
         page
       },
     });
 
-    return data;
+    return data.hits;
   } catch (event) {
     console.error(event);
   }

@@ -1,4 +1,4 @@
-import { Api } from "../../service/api";
+import { Api } from "../../services/api";
 import { Searchbar } from "../Searchbar/Searchbar";
 import { ImageGallery } from "../ImageGallery/ImageGallery";
 import { Button } from "../Button/Button";
@@ -17,7 +17,7 @@ export default function App() {
     const apiData = async () => {
       try {
         const data = await Api(search, page);
-        setImages((images) => [...images, ...data.hits]);
+        setImages((images) => [...images, ...data]);
         window.scrollTo({
           top: document.documentElement.scrollHeight,
           behavior: "smooth",
@@ -37,17 +37,17 @@ export default function App() {
     setPage(1);
     setImages([]);
   };
-  const more = () => {
+  const loadMore = () => {
     setLoad(true);
     setPage((prevValue) => prevValue + 1);
   };
-  const enable = images.length > 0 && images.length / page === 12;
+  const isVisibleBtn = images.length > 0 && images.length / page === 12;
   return (
     <Fragment>
       <Searchbar onSubmit={changeQuery} />
       <ImageGallery image={images} />
       {load && <Spinner />}
-      {enable && <Button onClick={more} />}
+      {isVisibleBtn && <Button onClick={loadMore} />}
     </Fragment>
   );
 }

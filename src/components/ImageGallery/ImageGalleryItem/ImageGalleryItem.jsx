@@ -3,13 +3,13 @@ import { Modal } from "../../Modal/Modal";
 import PropTypes from "prop-types";
 import s from "./ImageGalleryItem.module.css";
 
-export const ImageGalleryItem = ({ web, large }) => {
+export const ImageGalleryItem = ({ web, large, alt }) => {
   const [state, setState] = useState(false);
-  const modal = () => setState(!state);
+  const setModal = () => setState(!state);
   return (
     <li className={s.item}>
-      <img onClick={modal} className={s.image} src={web} alt="" />
-      {state && <Modal large={large} modal={modal} alt="" />}
+      <img onClick={setModal} className={s.image} src={web} alt={alt} />
+      {state && <Modal large={large} modal={setModal} alt="" />}
     </li>
   );
 };

@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import s from "./Modal.module.css";
 
-export const Modal = ({ large, modal }) => {
+export const Modal = ({ large, setModal }) => {
   useEffect(() => {
     window.addEventListener("keydown", closeEsc);
     return () => {
@@ -12,10 +12,10 @@ export const Modal = ({ large, modal }) => {
   });
 
   const closeEsc = (event) => {
-    if (event.code === "Escape") modal();
+    if (event.code === "Escape") setModal();
   };
   const closeBackdrop = (event) => {
-    if (event.currentTarget === event.target) modal();
+    if (event.currentTarget === event.target) setModal();
   };
   const point = document.querySelector("#modal");
   return createPortal(
